@@ -1,14 +1,16 @@
 ### Test local dev
 
 1. run `firebase emulators:start`
-2. function URL: `http://127.0.0.1:5001/translate-ebook/australia-southeast2/translate`
+2. quick ask URL: `http://127.0.0.1:5001/translate-ebook/australia-southeast2/quickAsk`
+3. ask anything URL: `http://127.0.0.1:5001/translate-ebook/australia-southeast2/askAnything`
 
 ### Deploy to prod
 
 1. deploy functions to a production environment
    `firebase deploy --only functions`
-2. function URL
-   `https://australia-southeast2-translate-ebook.cloudfunctions.net/translate`
+2. quick ask URL
+   `https://australia-southeast2-translate-ebook.cloudfunctions.net/quickAsk`
+3. ask anything URL `https://australia-southeast2-translate-ebook.cloudfunctions.net/askAnything`
 
 ### Reference
 
