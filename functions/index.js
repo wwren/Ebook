@@ -5,9 +5,11 @@ const { setGlobalOptions } = require('firebase-functions/v2');
 const logger = require('firebase-functions/logger');
 const cors = require('cors')({ origin: true });
 const axios = require('axios');
+const { ocrSpace } = require('ocr-space-api-wrapper');
 
 setGlobalOptions({ region: 'australia-southeast2' });
 const apiKey = defineSecret('TRANSLATE_GPT_API_KEY');
+const ocrAPIKey = defineSecret('OCR_API_KEY');
 
 exports.quickAsk = onRequest({ secrets: [apiKey] }, async (req, res) => {
   const API_KEY = apiKey.value();
@@ -105,6 +107,35 @@ exports.askAnything = onRequest({ secrets: [apiKey] }, async (req, res) => {
           },
         });
       }
+    }
+  });
+});
+
+exports.ocrExtractTextFromImg = onRequest({ secrets: [ocrAPIKey] }, async (req, res) => {
+  const OCR_API_KEY = ocrAPIKey.value();
+  if (!OCR_API_KEY) {
+    res.status(500).json({
+      error: {
+        message: 'OCR API key is not configured.',
+      },
+    });
+    return;
+  }
+
+  cors(req, res, async () => {
+    const { base64Data } = req.body;
+
+    try {
+      const response = await ocrSpace(base64Data, { apiKey: OCR_API_KEY });
+
+      logger.info('res2', response);
+      const parsedText = response.ParsedResults[0].ParsedText;
+      res.status(200).json({
+        message: 'OCR API connection successful.',
+        data: parsedText,
+      });
+    } catch (error) {
+      logger.error('error', error);
     }
   });
 });

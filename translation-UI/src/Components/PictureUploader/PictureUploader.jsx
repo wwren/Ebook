@@ -47,9 +47,9 @@ function PictureUploader({ content, setContent, selectedText, handleTextSelect }
     content,
   });
 
-  const handleChange = (e) => {
-    console.log('e', e.target.value);
-  };
+  // const handleChange = (e) => {
+  //   console.log('e', e.target.value);
+  // };
 
   return (
     <Container>
