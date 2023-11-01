@@ -1,23 +1,28 @@
-name: Ebook firebase function deployment
-
+name: Deploy Cloud Functions
 on:
-  push:
-    branches:
-      - main
+ workflow_dispatch:
+ push:
+   branches:
+     - main
+   paths:
+     — 'functions/**'
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18
-
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
-      - name: Deploy Firebase Functions
-        run: firebase deploy --only functions --token ${{ secrets.FIREBASE_TOKEN }}
+ build_and_deploy:
+   runs-on: ubuntu-latest
+   steps:
+     — uses: actions/checkout@v2
+     — uses: actions/setup-node@v1
+       with:
+         node-version: 16.x
+     — uses: actions/cache@v2
+       with:
+         path: ~/.npm
+         key: ${{ runner.os }}-node-${{ hashFiles('**/functions/package-lock.json') }}
+ restore-keys: |
+ ${{ runner.os }}-node-
+     - name: Build Cloud Functions
+       run: cd functions && npm ci
+     — name: Create SA key
+       run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $HOME/gcloud.json
+     — name: Deploy Cloud Functions
+       run: export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud.json && npx firebase-tools deploy --only functions --json
