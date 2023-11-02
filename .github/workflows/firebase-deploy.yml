@@ -14,7 +14,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 18.x
+          node-version: 16.x
       - name: Use cached action
         uses: actions/cache@v2
         with:
@@ -24,7 +24,16 @@ jobs:
         run: cd functions && npm ci
       - name: Create SA key
         run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $HOME/gcloud.json
+      - name: Allow access secret manager
+        uses: "google-github-actions/get-secretmanager-secrets@v1"
+        with:
+          secrets: |-
+            translateGetApiKey: translate-ebook/TRANSLATE_GPT_API_KEY
+            ocrApiKey: translate-ebook/OCR_API_KEY
       - name: Deploy Cloud Functions
+        env:
+          TRANSLATE_GPT_API_KEY: ${{ steps.secrets.outputs.translateGetApiKey }}
+          OCR_API_KEY: ${{ steps.secrets.outputs.ocrApiKey }}
         run: export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud.json && npx firebase-tools deploy --only functions --json
   # restore-keys: |
   #   ${{ runner.os }}-node-
