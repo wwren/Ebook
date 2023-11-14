@@ -11,7 +11,7 @@ setGlobalOptions({ region: 'australia-southeast2' });
 const apiKey = defineSecret('TRANSLATE_GPT_API_KEY');
 const ocrAPIKey = defineSecret('OCR_API_KEY');
 
-exports.quickAsk = onRequest({ secrets: [apiKey] }, async (req, res) => {
+exports.quickAskNewName = onRequest({ secrets: [apiKey] }, async (req, res) => {
   const API_KEY = apiKey.value();
   if (!API_KEY) {
     res.status(500).json({
