@@ -11,7 +11,7 @@ setGlobalOptions({ region: 'australia-southeast2' });
 const apiKey = defineSecret('TRANSLATE_GPT_API_KEY');
 const ocrAPIKey = defineSecret('OCR_API_KEY');
 
-exports.quickAskNewName = onRequest({ secrets: [apiKey] }, async (req, res) => {
+exports.quickAsk = onRequest({ secrets: [apiKey] }, async (req, res) => {
   const API_KEY = apiKey.value();
   if (!API_KEY) {
     res.status(500).json({
@@ -42,6 +42,7 @@ exports.quickAskNewName = onRequest({ secrets: [apiKey] }, async (req, res) => {
       );
       const completion = apiResponse.data.choices[0].message.content;
       logger.info('completion', completion);
+      logger.info('completion is being logged', completion);
       res.status(200).json({
         message: 'OpenAI API connection successful.',
         completion,
